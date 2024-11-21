@@ -1,7 +1,11 @@
+require('@babel/register');
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+
+const routes = require('./REST/routes').default;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -17,6 +21,10 @@ mongoose.connect(process.env.MONGO_URI, {
 }).catch(err => {
   console.error('Failed to connect with MongoDB: ', err);
 });
+
+const router = express.Router();
+routes(router);
+app.use(router);
 
 app.get('/', (req, res) => {
   res.send('Hello World');

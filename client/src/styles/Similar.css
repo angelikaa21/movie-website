@@ -1,0 +1,25 @@
+.similar-section {
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.similar-items {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+}
+
+.similar-item {
+    width: 150px;
+    text-align: center;
+}
+
+.similar-item-poster {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.similar-item-title {
+    font-size: 0.9em;
+    margin-top: 5px;
+}
