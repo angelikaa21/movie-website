@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
 import '../styles/Navbar.css';
-import { loginUser } from '../api/auth'; // Import funkcji do logowania
-import { showSuccess, showError } from '../utils/notification'; // Import funkcji z notification.js
+import { loginUser } from '../api/auth';
+import { showSuccess, showError } from '../utils/notification';
 
-const Login = ({ isOpen, onClose, openRegisterModal }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+const Login = ({ isOpen, onClose, openRegisterModal, setIsLoggedIn }) => {
+    const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(''); // Resetowanie błędu przed nową próbą
+        setError('');
         try {
-            const response = await loginUser({ login: username, password });
-            localStorage.setItem('token', response.token); // Zapis tokena w Local Storage
-
-            // Użycie funkcji z notification.js do pokazania powiadomienia o sukcesie
-            showSuccess('Zalogowano pomyślnie!'); 
-            onClose(); // Zamknięcie modala po zalogowaniu
+            const response = await loginUser({ 
+                login: formData.username, 
+                password: formData.password 
+            });
+            localStorage.setItem('token', response.token);
+            setIsLoggedIn(true);
+            showSuccess('Zalogowano pomyślnie!');
+            onClose();
         } catch (err) {
-            setError(err || 'Wystąpił błąd logowania.');
-            // Użycie funkcji z notification.js do pokazania powiadomienia o błędzie
+            setError(err.message || 'Wystąpił błąd logowania.');
             showError('Błąd logowania. Spróbuj ponownie.');
         }
     };
@@ -37,16 +43,20 @@ const Login = ({ isOpen, onClose, openRegisterModal }) => {
                     <label>Username</label>
                     <input
                         type="text"
+                        name="username"
                         placeholder="Enter username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        required
                     />
                     <label>Password</label>
                     <input
                         type="password"
+                        name="password"
                         placeholder="Enter password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
                     />
                     {error && <p className="error-message">{error}</p>}
                     <button type="submit" className="modal-button">Login</button>

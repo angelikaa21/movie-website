@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/Navbar.css';
-import { registerUser } from '../api/auth'; // Import funkcji do rejestracji
-import { showSuccess, showError } from '../utils/notification'; // Import funkcji do powiadomień
+import { registerUser } from '../api/auth';
+import { showSuccess, showError } from '../utils/notification';
 
 const Register = ({ isOpen, onClose, openLoginModal }) => {
     const [username, setUsername] = useState('');
@@ -12,25 +12,21 @@ const Register = ({ isOpen, onClose, openLoginModal }) => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setError(''); // Resetowanie błędu przed nową próbą
+        setError('');
 
-        // Sprawdzenie, czy hasła są takie same
         if (password !== repeatPassword) {
             setError('Hasła muszą się zgadzać.');
-            showError('Hasła muszą się zgadzać.'); // Wyświetlanie komunikatu o błędzie
+            showError('Hasła muszą się zgadzać.');
             return;
         }
 
         try {
-            // Wywołanie funkcji rejestracji
             await registerUser({ name: username, login: username, email, password });
-            
-            // Powiadomienie o sukcesie
             showSuccess('Zarejestrowano pomyślnie!');
-            onClose(); // Zamknięcie modala po udanej rejestracji
+            onClose();
+            openLoginModal();
         } catch (err) {
-            // Obsługa błędów
-            setError(err || 'Wystąpił błąd rejestracji.');
+            setError(err?.message || 'Wystąpił błąd rejestracji.');
             showError('Wystąpił błąd rejestracji. Spróbuj ponownie.');
         }
     };

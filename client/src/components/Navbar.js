@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import SearchBar from './SearchBar';
 import SearchResults from './SearchResults';
 import Login from './Login';
 import Register from './Register';
 import '../styles/Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
@@ -37,7 +37,7 @@ const Navbar = () => {
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         document.addEventListener('mousedown', handleOutsideClick);
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
@@ -45,6 +45,16 @@ const Navbar = () => {
     }, []);
 
     const handleMenuItemClick = () => setIsMenuOpen(false);
+
+    const handleLogin = () => {
+        openLoginModal();
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        toast.success('Wylogowano pomyślnie!');
+    };
 
     return (
         <nav className="navbar">
@@ -71,17 +81,45 @@ const Navbar = () => {
             </div>
             <SearchBar setSearchResults={setSearchResults} />
             {searchResults.length > 0 && <SearchResults results={searchResults} />}
-            <button className="login-button" onClick={openLoginModal}>Login</button>
+            <div className="auth-buttons">
+                {isLoggedIn ? (
+                    <>
+                        <Link to="/profile">
+                            <button className="profile-button">Profile</button>
+                        </Link>
+                        <button
+                            className="logout-button"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        className="login-button"
+                        onClick={handleLogin}
+                    >
+                        Login
+                    </button>
+                )}
+            </div>
 
             <Login
                 isOpen={isLoginModalOpen}
-                onClose={closeModals}
-                openRegisterModal={openRegisterModal}
+                onClose={() => setIsLoginModalOpen(false)}
+                openRegisterModal={() => {
+                    setIsLoginModalOpen(false);
+                    setIsRegisterModalOpen(true);
+                }}
+                setIsLoggedIn={setIsLoggedIn}
             />
             <Register
                 isOpen={isRegisterModalOpen}
-                onClose={closeModals}
-                openLoginModal={openLoginModal}
+                onClose={() => setIsRegisterModalOpen(false)}
+                openLoginModal={() => {
+                    setIsRegisterModalOpen(false);
+                    setIsLoginModalOpen(true);
+                }}
             />
         </nav>
     );
