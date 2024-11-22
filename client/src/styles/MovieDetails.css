@@ -240,10 +240,11 @@ body {
 }
 
 .confirm-rate-btn {
-    background: #c0c0be;
-    color: #000;
+    background: rgba(104, 103, 103, 0.692);
+    color: #ffffff;
+    font-size: 15px;
     border: none;
-    padding: 10px 150px;
+    padding: 12px 80px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
@@ -251,7 +252,8 @@ body {
 }
 
 .confirm-rate-btn:hover {
-    background: #aaaaa3;
+    background: rgba(255, 9, 124, 0.493);
+    color: #ffffff;
 }
 
 .trailer-modal-overlay {
@@ -319,7 +321,7 @@ body {
     box-sizing: border-box;
     font-size: 1rem;
     cursor: pointer;
-    background-color: rgba(224, 126, 195, 0.6);
+    background-color: rgba(255, 9, 124, 0.493);
     border: 1px solid rgba(12, 12, 12, 0.2);
     color: white;
     white-space: nowrap;
