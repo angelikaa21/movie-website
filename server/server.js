@@ -5,6 +5,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const userEndpoint = require('./REST/user.endpoint').default;
+
 const routes = require('./REST/routes').default;
 
 const app = express();
@@ -25,6 +27,9 @@ mongoose.connect(process.env.MONGO_URI, {
 const router = express.Router();
 routes(router);
 app.use(router);
+
+userEndpoint(router);
+app.use('/api/user', router);
 
 app.get('/', (req, res) => {
   res.send('Hello World');

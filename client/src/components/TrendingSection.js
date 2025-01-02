@@ -8,9 +8,9 @@ import Slider from 'react-slick';
 const TrendingSection = () => {
     const [movies, setMovies] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [isDragging, setIsDragging] = useState(false); // Nowy stan
+    const [isDragging, setIsDragging] = useState(false);
     const sliderRef = useRef(null);
-    const dragStartTime = useRef(null); // Czas rozpoczęcia przeciągania
+    const dragStartTime = useRef(null);
 
     useEffect(() => {
         fetchTrendingMovies()
@@ -44,27 +44,24 @@ const TrendingSection = () => {
             },
         ],
         beforeChange: (current, next) => {
-            dragStartTime.current = Date.now(); // Zapisanie czasu rozpoczęcia przeciągania
-            setIsDragging(true);  // Ustawienie isDragging na true przed zmianą slajdu
-            setCurrentSlide(next);  // Ustawienie nowego indeksu slajdu
+            dragStartTime.current = Date.now();
+            setIsDragging(true);
+            setCurrentSlide(next);
         },
         afterChange: () => {
-            setIsDragging(false);  // Resetowanie isDragging po zmianie slajdu
+            setIsDragging(false);
         },
     };
 
-    // Obliczanie szerokości paska postępu
     const progressWidth = movies.length > 0
         ? `${((currentSlide + 1) / movies.length) * 100}%`
         : '0%';
 
-    // Funkcja obsługująca kliknięcie karty filmu
     const handleCardClick = (e) => {
-        const dragDuration = Date.now() - dragStartTime.current; // Czas przeciągania
+        const dragDuration = Date.now() - dragStartTime.current;
 
-        // Jeśli przeciąganie trwało krócej niż 150 ms, to traktujemy kliknięcie jako przypadkowe
         if (isDragging && dragDuration < 150) {
-            e.preventDefault(); // Zapobiegamy kliknięciu, jeśli przeciąganie było zbyt krótkie
+            e.preventDefault();
         }
     };
 
@@ -82,7 +79,7 @@ const TrendingSection = () => {
                             <Link
                                 to={linkTo}
                                 className="trending-movie-card"
-                                onClick={handleCardClick}  // Zapobieganie kliknięciu, jeśli przeciągamy slider
+                                onClick={handleCardClick}
                             >
                                 <img
                                     src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
@@ -95,8 +92,7 @@ const TrendingSection = () => {
                     );
                 })}
             </Slider>
-
-            {/* Pasek postępu */}
+            
             <div className="trending-progress-bar-container">
                 <div
                     className="trending-progress-bar"

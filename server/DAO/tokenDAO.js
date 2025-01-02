@@ -23,37 +23,53 @@ const tokenSchema = new mongoose.Schema({
 const TokenModel = mongoose.model('token', tokenSchema);
 
 async function create(user) {
+  if (!user || !user.id) {
+    throw applicationException.new(applicationException.BAD_REQUEST, 'Invalid user object');
+  }
+
   const access = 'auth';
   const userData = {
-    userId: user.id,
+    userId: user.id || user._id,
     name: user.email,
     role: user.role,
     isAdmin: user.isAdmin,
     access: access
-  };
-  const value = jwt.sign(
+};
+const value = jwt.sign(
     userData,
     config.JwtSecret,
     {
-      expiresIn: '3h'
-    });
-  const result = await TokenModel({
-    userId: user.id,
-    type: 'authorization',
-    value: value,
-    createDate: momentWrapper.get().valueOf()
-  }).save();
-  if (result) {
-    return mongoConverter(result);
+        expiresIn: '3h'
+    }
+);
+
+  try {
+    const result = await TokenModel({
+      userId: user.id,
+      type: 'authorization',
+      value: value,
+      createDate: momentWrapper.get().valueOf()
+    }).save();
+
+    if (result) {
+      return mongoConverter(result);
+    }
+  } catch (err) {
+    throw applicationException.new(applicationException.BAD_REQUEST, 'Error creating token');
   }
-  throw applicationException.new(applicationException.BAD_REQUEST, error.message);
 }
 
 async function get(tokenValue) {
-  const result = await TokenModel.findOne({ value: tokenValue });
-  if (result) {
-    return mongoConverter(result);
+  try {
+      const result = await TokenModel.findOne({ value: tokenValue });
+      if (result) {
+          return mongoConverter(result);
+      }
+  } catch (err) {
+      console.error('Error verifying token:', err.message);
+      throw applicationException.new(applicationException.UNAUTHORIZED, 'Token not valid');
   }
+
   throw applicationException.new(applicationException.UNAUTHORIZED, 'Token not found');
 }
 

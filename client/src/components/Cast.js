@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
+import placeholder from '../images/placeholder.jpg';
 import '../styles/Cast.css';
 
 const Cast = ({ cast }) => {
@@ -42,7 +43,11 @@ const Cast = ({ cast }) => {
                     className="cast-photo"
                   />
                 ) : (
-                  <div className="cast-photo" />
+                    <img
+                     src={placeholder}
+                     alt="placeholder"
+                     className="cast-photo"
+                     />
                 )}
 
                 <p className="actor-name">{actor.name}</p>

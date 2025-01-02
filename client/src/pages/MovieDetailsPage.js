@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { BsPlayBtnFill } from 'react-icons/bs';
 import { FaRegHeart, FaHeart, FaRegBookmark, FaBookmark, FaStar, FaRegStar } from 'react-icons/fa';
-import { fetchMovieDetails, fetchMovieTrailer, fetchCast, fetchTVShowDetails, fetchTVShowTrailer, fetchTVCast, fetchSimilar } from '../api/tmdb';
+import {
+    fetchMovieDetails,
+    fetchMovieTrailer,
+    fetchCast,
+    fetchTVShowDetails,
+    fetchTVShowTrailer,
+    fetchTVCast,
+    fetchSimilar
+} from '../api/tmdb';
 import Cast from '../components/Cast';
 import Similar from '../components/Similar';
+import Comments from '../components/Comments';
 import '../styles/MovieDetails.css';
 
 const MovieDetailsPage = ({ isTVShow }) => {
     const { id } = useParams();
+    const { token } = useSelector((state) => state.auth);
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
@@ -18,44 +29,204 @@ const MovieDetailsPage = ({ isTVShow }) => {
     const [cast, setCast] = useState([]);
     const [similar, setSimilar] = useState([]);
     const [userRating, setUserRating] = useState(null);
+    const [isRated, setIsRated] = useState(false);
     const [showRateModal, setShowRateModal] = useState(false);
     const [stars, setStars] = useState(0);
 
-    const handleFavoriteClick = () => setIsFavorite(!isFavorite);
-    const handleToWatchClick = () => setIsToWatch(!isToWatch);
-    const toggleRateModal = () => setShowRateModal(!showRateModal);
-
-    const handleStarClick = (starIndex) => setStars(starIndex);
-    const handleRateConfirm = () => {
-        setUserRating(stars);
-        toggleRateModal();
-    };
-
     useEffect(() => {
-        const getDetails = async () => {
+        const fetchDetails = async () => {
             try {
-                const fetchedData = isTVShow ? await fetchTVShowDetails(id) : await fetchMovieDetails(id);
-                setData(fetchedData);
+                const details = isTVShow ? await fetchTVShowDetails(id) : await fetchMovieDetails(id);
+                setData(details);
 
-                const fetchedTrailer = isTVShow ? await fetchTVShowTrailer(id) : await fetchMovieTrailer(id);
-                setTrailer(fetchedTrailer);
+                const trailerData = isTVShow ? await fetchTVShowTrailer(id) : await fetchMovieTrailer(id);
+                setTrailer(trailerData);
 
-                const fetchedCast = isTVShow ? await fetchTVCast(id) : await fetchCast(id);
-                setCast(fetchedCast);
+                const castData = isTVShow ? await fetchTVCast(id) : await fetchCast(id);
+                setCast(castData);
 
-                const fetchedSimilar = await fetchSimilar(id, isTVShow);
-                setSimilar(fetchedSimilar);
+                const similarData = await fetchSimilar(id, isTVShow);
+                setSimilar(similarData);
             } catch (err) {
-                setError(err.message || "Error fetching details.");
-                console.error("Error fetching details:", err);
+                setError(err.message || 'Error fetching details.');
+                console.error('Error fetching details:', err);
             }
         };
 
-        getDetails();
+        fetchDetails();
         window.scrollTo(0, 0);
     }, [id, isTVShow]);
 
+    useEffect(() => {
+        const checkIfFavorite = async () => {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/user/favorites/check?movieId=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) throw new Error('Failed to check favorite status');
+
+                const { isFavorite } = await response.json();
+                setIsFavorite(isFavorite);
+            } catch (err) {
+                console.error('Error checking favorite status:', err.message);
+            }
+        };
+
+        checkIfFavorite();
+    }, [id]);
+
+    useEffect(() => {
+        const fetchUserRating = async () => {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/user/ratings/check?movieId=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch user rating');
+
+                const { rated, rating } = await response.json();
+
+                setIsRated(rated);
+                setUserRating(rating);
+            } catch (err) {
+                console.error('Error fetching user rating:', err.message);
+            }
+        };
+
+        fetchUserRating();
+    }, [id]);
+
+    useEffect(() => {
+        const checkIfToWatch = async () => {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/user/watchlist/check?movieId=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) throw new Error('Failed to check watchlist status');
+
+                const { isToWatch } = await response.json();
+                setIsToWatch(isToWatch);
+            } catch (err) {
+                console.error('Error checking watchlist status:', err.message);
+            }
+        };
+
+        checkIfToWatch();
+    }, [id]);
+
+    const handleFavoriteClick = async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            alert('You need to log in to perform this action.');
+            return;
+        }
+
+        try {
+            const endpoint = isFavorite
+                ? 'http://localhost:5000/api/user/favorites/remove'
+                : 'http://localhost:5000/api/user/favorites/add';
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ movieId: id }),
+            });
+
+            if (!response.ok) throw new Error('Failed to update favorites');
+
+            const updatedFavorites = await response.json();
+            setIsFavorite(updatedFavorites.includes(id));
+        } catch (err) {
+            console.error('Error updating favorites:', err.message);
+        }
+    };
+
+    const handleToWatchClick = async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            alert('You need to log in to perform this action.');
+            return;
+        }
+
+        try {
+            const endpoint = isToWatch
+                ? 'http://localhost:5000/api/user/watchlist/remove'
+                : 'http://localhost:5000/api/user/watchlist/add';
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ movieId: id }),
+            });
+
+            if (!response.ok) throw new Error('Failed to update watchlist');
+
+            const updatedWatchlist = await response.json();
+            setIsToWatch(updatedWatchlist.includes(id));
+        } catch (err) {
+            console.error('Error updating watchlist:', err.message);
+        }
+    };
+
     const toggleModal = () => setShowModal(!showModal);
+    const toggleRateModal = () => setShowRateModal(!showRateModal);
+    const handleStarClick = (starIndex) => setStars(starIndex);
+    const handleRateConfirm = async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            alert('You need to log in to rate.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/user/ratings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ movieId: id, rating: stars }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to submit rating');
+            }
+
+            const updatedRating = await response.json();
+            setUserRating(stars);
+            setIsRated(true);
+
+            toggleRateModal();
+            alert('Rating submitted successfully!');
+        } catch (err) {
+            console.error('Error submitting rating:', err.message);
+            alert(`Error submitting rating: ${err.message}`);
+        }
+    };
 
     if (error) return <div className="error-message">{`Error: ${error}`}</div>;
     if (!data) return <div className="loading-message">Loading details...</div>;
@@ -66,14 +237,11 @@ const MovieDetailsPage = ({ isTVShow }) => {
     const posterUrl = data.poster_path
         ? `https://image.tmdb.org/t/p/w1280${data.poster_path}`
         : '/placeholder-poster.jpg';
-    const releaseYear = data.release_date || data.first_air_date
-        ? (isTVShow ? data.first_air_date : data.release_date).split('-')[0]
-        : 'Unknown';
+    const releaseYear = (isTVShow ? data.first_air_date : data.release_date)?.split('-')[0] || 'Unknown';
     const runtime = isTVShow
         ? `${data.number_of_seasons || 0} season(s)`
         : `${data.runtime || 0} min`;
-
-    const genres = data.genres?.length ? data.genres.map(genre => genre.name).join(', ') : 'No genres available';
+    const genres = data.genres?.length ? data.genres.map((genre) => genre.name).join(', ') : 'No genres available';
     const rating = data.vote_average ? `${data.vote_average.toFixed(1)} ★` : 'No rating available';
     const overview = data.overview || 'No overview available.';
 
@@ -174,13 +342,19 @@ const MovieDetailsPage = ({ isTVShow }) => {
                 </div>
             )}
 
+
             <div className="cast-section">
                 <Cast cast={cast} />
+            </div>
+
+            <div className="comments-section">
+                <Comments movieId={id} />
             </div>
 
             <div className="similar-section">
                 <Similar similar={similar} />
             </div>
+
         </div>
     );
 };

@@ -153,22 +153,41 @@
     margin-right: 10px;
 }
 
-.login-button {
-    border: 2px solid #fffbfd;
-    padding: 10px 30px;
-    border-radius: 25px;
-    color: white;
-    background: transparent;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    margin-right: 35px;
+.auth-buttons {
+    display: flex;
+    align-items: center;
 }
 
+
+.logout-button,
+.login-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 2px solid #fffbfd;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    margin-right: 35px;
+    
+}
+
+.profile-button{
+    margin-left: 10px;
+    padding: 10px 10px;
+    cursor: pointer;
+    background-color: rgba(236, 118, 173, 0.747);
+    border: 2px solid #fffbfd;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.profile-button:hover,
+.logout-button:hover,
 .login-button:hover {
-    background: #ec7bb4;
-    box-shadow: 0 4px 12px rgba(236, 123, 180, 0.5);
+    background-color: rgba(255, 9, 124, 0.493);
 }
 
 .modal-overlay {
