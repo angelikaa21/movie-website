@@ -1,6 +1,5 @@
-/* Styl dla powiadomienia sukcesu */
 .toast-success {
-  background-color: #0f0f0f; /* Zielony dla sukcesu */
+  background-color: #0f0f0f;
   border-radius: 8px;
   color: white;
   font-weight: bold;
@@ -10,12 +9,11 @@
 }
 
 .toast-success .Toastify__progress-bar {
-  background-color: #81C784; /* Jaśniejszy zielony dla paska postępu */
+  background-color: #81C784;
 }
 
-/* Styl dla powiadomienia błędu */
 .toast-error {
-  background-color: #63110b; /* Czerwony dla błędu */
+  background-color: #63110b;
   border-radius: 8px;
   color: white;
   font-weight: bold;
@@ -25,5 +23,5 @@
 }
 
 .toast-error .Toastify__progress-bar {
-  background-color: #E57373; /* Jaśniejszy czerwony dla paska postępu */
+  background-color: #E57373;
 }

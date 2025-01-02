@@ -15,19 +15,19 @@ const Register = ({ isOpen, onClose, openLoginModal }) => {
         setError('');
 
         if (password !== repeatPassword) {
-            setError('Hasła muszą się zgadzać.');
-            showError('Hasła muszą się zgadzać.');
+            setError('Passwords must match.');
+            showError('Passwords must match.');
             return;
         }
 
         try {
             await registerUser({ name: username, login: username, email, password });
-            showSuccess('Zarejestrowano pomyślnie!');
+            showSuccess('Registered successfully!');
             onClose();
             openLoginModal();
         } catch (err) {
-            setError(err?.message || 'Wystąpił błąd rejestracji.');
-            showError('Wystąpił błąd rejestracji. Spróbuj ponownie.');
+            setError(err?.message || 'A registration error has occurred.');
+            showError('A registration error has occurred. Please try again.');
         }
     };
 

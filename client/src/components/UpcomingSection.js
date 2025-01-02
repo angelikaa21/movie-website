@@ -20,7 +20,7 @@ const UpcomingSection = () => {
         infinite: true,
         speed: 500,
         slidesToShow: 8,
-        slidesToScroll: 3,
+        slidesToScroll: 4,
         arrows: true,
         dots: false,
         responsive: [
@@ -33,7 +33,7 @@ const UpcomingSection = () => {
             {
                 breakpoint: 768,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 4,
                 },
             },
         ],

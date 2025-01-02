@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/authSlice';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SearchBar from './SearchBar';
@@ -6,8 +8,12 @@ import SearchResults from './SearchResults';
 import Login from './Login';
 import Register from './Register';
 import '../styles/Navbar.css';
+import { showSuccess, showError } from '../utils/notification';
 
-const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) => {
+const Navbar = ({ setSearchResults, searchResults }) => {
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const dispatch = useDispatch();
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -46,14 +52,9 @@ const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) 
 
     const handleMenuItemClick = () => setIsMenuOpen(false);
 
-    const handleLogin = () => {
-        openLoginModal();
-    };
-
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-        toast.success('Wylogowano pomyślnie!');
+        dispatch(logout());
+        showSuccess('Logged out successfully!');
     };
 
     return (
@@ -73,9 +74,15 @@ const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) 
                 </div>
                 {isMenuOpen && (
                     <div ref={menuRef} className="dropdown-menu">
-                        <Link to="/movies" onClick={handleMenuItemClick}>Movies</Link>
-                        <Link to="/tv-series" onClick={handleMenuItemClick}>TV Series</Link>
-                        <Link to="/what-to-watch" onClick={handleMenuItemClick}>What to Watch</Link>
+                        <Link to="/movies" onClick={handleMenuItemClick}>
+                            Movies
+                        </Link>
+                        <Link to="/tv-series" onClick={handleMenuItemClick}>
+                            TV Series
+                        </Link>
+                        <Link to="/what-to-watch" onClick={handleMenuItemClick}>
+                            What to Watch
+                        </Link>
                     </div>
                 )}
             </div>
@@ -95,10 +102,7 @@ const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) 
                         </button>
                     </>
                 ) : (
-                    <button
-                        className="login-button"
-                        onClick={handleLogin}
-                    >
+                    <button className="login-button" onClick={openLoginModal}>
                         Login
                     </button>
                 )}
@@ -106,20 +110,13 @@ const Navbar = ({ setIsLoggedIn, isLoggedIn, setSearchResults, searchResults }) 
 
             <Login
                 isOpen={isLoginModalOpen}
-                onClose={() => setIsLoginModalOpen(false)}
-                openRegisterModal={() => {
-                    setIsLoginModalOpen(false);
-                    setIsRegisterModalOpen(true);
-                }}
-                setIsLoggedIn={setIsLoggedIn}
+                onClose={closeModals}
+                openRegisterModal={openRegisterModal}
             />
             <Register
                 isOpen={isRegisterModalOpen}
-                onClose={() => setIsRegisterModalOpen(false)}
-                openLoginModal={() => {
-                    setIsRegisterModalOpen(false);
-                    setIsLoginModalOpen(true);
-                }}
+                onClose={closeModals}
+                openLoginModal={openLoginModal}
             />
         </nav>
     );
