@@ -4,6 +4,129 @@ import UserDAO from '../DAO/userDAO';
 import applicationException from '../service/applicationException';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
+import { fetchRecommendations } from '../shared/tmdb';
+import { fetchItemType  } from '../shared/tmdb';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
+
+async function sendRecommendationEmail(user) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.freesmtpservers.com",
+    port: 25,
+    secure: false,
+    auth: null,
+  });
+
+  try {
+    const { reason, recommendation } = await getEmailRecommendations(user._id);
+    if (recommendation) {
+      const mailOptions = {
+        from: 'moviemotions@example.com',
+        to: user.email,
+        subject: `Your Movie Recommendation: ${recommendation.title || recommendation.name}`,
+        html: `
+          <h1>Your Recommendation</h1>
+          <p>We found this for you based on your favorite: <strong>${reason}</strong></p>
+          <h2>${recommendation.title || recommendation.name}</h2>
+          <p>${recommendation.overview}</p>
+          <a href="https://www.themoviedb.org/${recommendation.media_type}/${recommendation.id}" target="_blank">
+            Learn more about this movie/TV show
+          </a>
+        `,
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent:', info);
+      console.log('Accepted:', info.accepted);
+      console.log('Rejected:', info.rejected);
+    } else {
+      const noFavoritesMailOptions = {
+        from: 'moviemotions@example.com',
+        to: user.email,
+        subject: 'Add Favorites to Get Recommendations!',
+        html: `
+          <h1>Hey there!</h1>
+          <p>Add something to your favorites to start receiving movie recommendations!</p>
+        `,
+      };
+
+      const info = await transporter.sendMail(noFavoritesMailOptions);
+      console.log('No favorites email sent:', info);
+      console.log('Accepted:', info.accepted);
+      console.log('Rejected:', info.rejected);
+    }
+  } catch (error) {
+    if (error.error && error.error.code === 404 && error.message === 'User has no favorites') {
+      const noFavoritesMailOptions = {
+        from: 'moviemotions@example.com',
+        to: user.email,
+        subject: 'Add Favorites to Get Recommendations!',
+        html: `
+          <h1>Hey there!</h1>
+          <p>Add something to your favorites to start receiving movie recommendations!</p>
+        `,
+      };
+
+      const info = await transporter.sendMail(noFavoritesMailOptions);
+      console.log('No favorites email sent:', info);
+      console.log('Accepted:', info.accepted);
+      console.log('Rejected:', info.rejected);
+    } else {
+      console.error(`Error sending email to ${user.email}:`, error);
+      throw error;
+    }
+  }
+}
+
+async function getEmailRecommendations(userId) {
+  try {
+    const user = await UserDAO.get(userId);
+
+    if (!user || !user.favorites || user.favorites.length === 0) {
+      return {
+        reason: 'User has no favorites',
+        recommendation: null,
+      };
+    }
+
+    let randomIndex = Math.floor(Math.random() * user.favorites.length);
+    let favoriteId = user.favorites[randomIndex];
+    let reason = '';
+
+    const { isTVShow, details } = await fetchItemType(favoriteId);
+
+    let recommendations = await fetchRecommendations(favoriteId, isTVShow);
+
+    if (recommendations.length === 0) {
+      randomIndex = (randomIndex + 1) % user.favorites.length;
+      favoriteId = user.favorites[randomIndex];
+      const { isTVShow: fallbackIsTVShow, details: fallbackDetails } = await fetchItemType(favoriteId);
+      recommendations = await fetchRecommendations(favoriteId, fallbackIsTVShow);
+
+      reason = fallbackDetails.title || fallbackDetails.name;
+    } else {
+      reason = details.title || details.name;
+    }
+
+    if (recommendations.length === 0) {
+      return {
+        reason: 'No recommendations available',
+        recommendation: null,
+      };
+    }
+
+    const recommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
+
+    return {
+      reason: reason,
+      recommendation: recommendation,
+    };
+  } catch (error) {
+    console.error('Błąd podczas pobierania rekomendacji:', error);
+    throw applicationException.new(applicationException.INTERNAL_ERROR, 'Nie udało się pobrać rekomendacji');
+  }
+}
 
 
 function create(context) {
@@ -195,6 +318,51 @@ function create(context) {
     return comments;
   }
 
+  async function getRecommendations(userId) {
+    const user = await UserDAO.get(userId);
+  
+    if (!user || !user.favorites || user.favorites.length === 0) {
+      throw applicationException.new(applicationException.NOT_FOUND, 'User has no favorites');
+    }
+  
+    let recommendations = [];
+    let reason = '';
+    let randomIndex = Math.floor(Math.random() * user.favorites.length);
+    let favoriteId = user.favorites[randomIndex];
+  
+    try {
+      const { isTVShow, details } = await fetchItemType(favoriteId);
+  
+      recommendations = await fetchRecommendations(favoriteId, isTVShow);
+  
+      if (recommendations.length === 0) {
+        randomIndex = (randomIndex + 1) % user.favorites.length;
+        favoriteId = user.favorites[randomIndex];
+  
+        const { isTVShow: fallbackIsTVShow, details: fallbackDetails } = await fetchItemType(favoriteId);
+        recommendations = await fetchRecommendations(favoriteId, fallbackIsTVShow);
+  
+        reason = fallbackDetails.title || fallbackDetails.name;
+      } else {
+        reason = details.title || details.name;
+      }
+  
+      if (recommendations.length === 0) {
+        return {
+          reason: 'No recommendations available',
+          recommendations: [],
+        };
+      }
+  
+      return {
+        reason: reason,
+        recommendations: recommendations,
+      };
+    } catch (error) {
+      console.error('Błąd podczas pobierania rekomendacji:', error);
+      throw applicationException.new(applicationException.INTERNAL_ERROR, 'Nie udało się pobrać rekomendacji');
+    }
+  }
 
   return {
     authenticate: authenticate,
@@ -207,9 +375,12 @@ function create(context) {
     rateMovie: rateMovie,
     addComment: addComment,
     getCommentsByMovie: getCommentsByMovie,
+    getRecommendations: getRecommendations,
   };
 }
 
 export default {
-  create: create
+  create: create,
+  sendRecommendationEmail: sendRecommendationEmail,
+  getEmailRecommendations: getEmailRecommendations,
 };

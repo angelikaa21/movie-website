@@ -1,51 +1,60 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import Slider from 'react-slick';
 import { Link } from 'react-router-dom';
-import '../styles/MovieDetails.css';
+import { sliderSettings } from '../utils/sliderSettings';
+import '../styles/SliderSection.css';
 
 const Similar = ({ similar, isTVShow }) => {
-    const scrollContainerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartTime = useRef(null);
 
-    const scrollLeft = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollLeft -= 200;
-        }
-    };
+  const filteredSimilar = similar.filter(item => item.poster_path);
 
-    const scrollRight = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollLeft += 200;
-        }
-    };
+  const sliderSettingsWithDrag = {
+    ...sliderSettings,
+    beforeChange: () => {
+      dragStartTime.current = Date.now();
+      setIsDragging(true);
+    },
+    afterChange: () => {
+      setIsDragging(false);
+    },
+  };
 
-    const filteredSimilar = similar.filter(item => item.poster_path);
-
-    if (!filteredSimilar || filteredSimilar.length === 0) {
-        return <div className="no-similar-message">No similar movies or TV shows found.</div>;
+  const handleCardClick = (e) => {
+    const dragDuration = Date.now() - dragStartTime.current;
+    if (isDragging && dragDuration < 150) {
+      e.preventDefault();
     }
+  };
 
-    return (
-        <div className="movie-cast-container">
-            <h3 className="cast-title">Similar Movies/TV Shows</h3>
-            <div className="movie-cast-wrapper">
-                <button className="scroll-button left" onClick={scrollLeft}>{'<'}</button>
-                <div className="movie-cast" ref={scrollContainerRef}>
-                    {filteredSimilar.map((item) => (
-                        <div key={item.id} className="cast-member">
-                            <Link to={isTVShow ? `/tv-series/${item.id}` : `/movies/${item.id}`}>
-                                <img
-                                    src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
-                                    alt={item.title || item.name}
-                                    className="cast-photo"
-                                />
-                            </Link>
-                            <p className="actor-name">{item.title || item.name}</p>
-                        </div>
-                    ))}
-                </div>
-                <button className="scroll-button right" onClick={scrollRight}>{'>'}</button>
-            </div>
-        </div>
-    );
+  if (!filteredSimilar || filteredSimilar.length === 0) {
+    return <div className="no-similar-message">No similar movies or TV shows found.</div>;
+  }
+
+  return (
+    <section className="slider-section-similar">
+      <h2>Similar {isTVShow ? "TV Shows" : "Movies"}</h2>
+      <Slider {...sliderSettingsWithDrag}>
+        {filteredSimilar.map(item => (
+          <div key={item.id}>
+            <Link
+              to={isTVShow ? `/tv-series/${item.id}` : `/movies/${item.id}`}
+              className="slider-card"
+              onClick={handleCardClick}
+            >
+              <img
+                src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                alt={item.title || item.name}
+                className="slider-image"
+              />
+              <h3>{item.title || item.name}</h3>
+            </Link>
+          </div>
+        ))}
+      </Slider>
+    </section>
+  );
 };
 
 export default Similar;

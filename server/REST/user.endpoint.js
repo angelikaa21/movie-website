@@ -305,6 +305,26 @@ const userEndpoint = (router) => {
     }
   });
 
+
+  router.get('/api/user/recommendations', auth, async (req, res) => {
+    try {
+      const userId = req.user.userId;
+  
+      if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        console.error('Invalid or undefined user ID:', userId);
+        throw applicationException.new(applicationException.BAD_REQUEST, 'Invalid user ID');
+      }
+  
+      const { reason, recommendations } = await business.getUserManager(req).getRecommendations(userId);
+  
+      res.status(200).json({ reason, recommendations });
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      applicationException.errorHandler(error, res);
+    }
+  });
+  
+
   return router;
 };
 

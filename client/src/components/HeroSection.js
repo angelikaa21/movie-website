@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchTrendingMovies } from '../api/tmdb';
+import { MdKeyboardArrowRight } from "react-icons/md";
 import '../styles/HeroSection.css';
 import Slider from 'react-slick';
 
@@ -79,8 +80,10 @@ const HeroSection = () => {
                             </div>
 
                             <div className="hero-buttons">
-                                <button onClick={() => handleShowDetails(movie)}>Show details</button>
-                                <button>Favorite</button>
+                                <button onClick={() => handleShowDetails(movie)}>
+                                     DETAILS
+                                    <MdKeyboardArrowRight className="arrow-icon" />
+                                </button>
                             </div>
 
                             <div className="hero-progress-bar-container" ref={progressBarRef}>

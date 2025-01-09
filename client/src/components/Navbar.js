@@ -81,7 +81,7 @@ const Navbar = ({ setSearchResults, searchResults }) => {
                             TV Series
                         </Link>
                         <Link to="/what-to-watch" onClick={handleMenuItemClick}>
-                            What to Watch
+                            What to Watch - AI Quiz
                         </Link>
                     </div>
                 )}
