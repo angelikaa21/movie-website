@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import Slider from 'react-slick';
 import { Link } from 'react-router-dom';
 import { sliderSettings } from '../utils/sliderSettings';
-import '../styles/SliderSection.css'; // Wspólne style
+import '../styles/SliderSection.css';
 
 const Similar = ({ similar, isTVShow }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -33,7 +33,7 @@ const Similar = ({ similar, isTVShow }) => {
   }
 
   return (
-    <section className="slider-section-similar"> {/* Użycie wspólnych klas */}
+    <section className="slider-section-similar">
       <h2>Similar {isTVShow ? "TV Shows" : "Movies"}</h2>
       <Slider {...sliderSettingsWithDrag}>
         {filteredSimilar.map(item => (

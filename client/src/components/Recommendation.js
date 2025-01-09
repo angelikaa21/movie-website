@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchRecommendations } from '../api/user';
 import Slider from 'react-slick';
-import { sliderSettings } from '../utils/sliderSettings'; // Import wspólnych ustawień slidera
+import { sliderSettings } from '../utils/sliderSettings';
 import { Link } from 'react-router-dom';
 import '../styles/SliderSection.css';
 
@@ -9,9 +9,9 @@ const Recommendations = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);  // Stan do śledzenia przewijania
-  const dragStartTime = useRef(null);  // Czas rozpoczęcia przewijania
-  const isFetchedRef = useRef(false); // Flaga zarządzana poza cyklem renderowania
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartTime = useRef(null);
+  const isFetchedRef = useRef(false);
 
   useEffect(() => {
     const loadRecommendations = async () => {
@@ -22,7 +22,7 @@ const Recommendations = () => {
         return;
       }
 
-      if (isFetchedRef.current) return; // Blokowanie ponownego pobierania danych
+      if (isFetchedRef.current) return;
 
       try {
         const data = await fetchRecommendations(token);
@@ -31,7 +31,7 @@ const Recommendations = () => {
         }
         setRecommendations(data.recommendations);
         setReason(data.reason);
-        isFetchedRef.current = true; // Oznaczenie, że dane zostały pobrane
+        isFetchedRef.current = true;
       } catch (error) {
         console.error('Failed to fetch recommendations:', error);
       } finally {
@@ -40,10 +40,10 @@ const Recommendations = () => {
     };
 
     loadRecommendations();
-  }, []); // Pusty array zależności oznacza uruchomienie tylko raz
+  }, []);
 
   const sliderSettingsWithDrag = {
-    ...sliderSettings, // Użycie wspólnych ustawień slidera
+    ...sliderSettings,
     beforeChange: (current, next) => {
       dragStartTime.current = Date.now();
       setIsDragging(true);
@@ -56,9 +56,8 @@ const Recommendations = () => {
   const handleCardClick = (e) => {
     const dragDuration = Date.now() - dragStartTime.current;
     
-    // Jeśli przewijanie trwało mniej niż 150 ms, to uznajemy to za kliknięcie, nie przewijanie
     if (isDragging && dragDuration < 150) {
-      e.preventDefault(); // Zablokowanie przejścia na stronę
+      e.preventDefault();
     }
   };
 
@@ -69,13 +68,13 @@ const Recommendations = () => {
   return (
     <section className="slider-section recommendations">
       <h2>Because you like: {reason}</h2>
-      <Slider {...sliderSettingsWithDrag}> {/* Użycie slidera z dodatkowymi ustawieniami */}
+      <Slider {...sliderSettingsWithDrag}>
         {recommendations.map(item => (
           <div key={item.id}>
             <Link 
-              to={item.media_type === 'movie' ? `/movies/${item.id}` : `/tv-series/${item.id}`} // Link do strony szczegółów
+              to={item.media_type === 'movie' ? `/movies/${item.id}` : `/tv-series/${item.id}`}
               className="slider-card recommendation-card"
-              onClick={handleCardClick} // Obsługa kliknięcia
+              onClick={handleCardClick}
             >
               <img
                 src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}

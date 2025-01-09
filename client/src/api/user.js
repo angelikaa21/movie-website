@@ -16,3 +16,4 @@ export const fetchRecommendations = async (token) => {
       throw error;
     }
   }
+

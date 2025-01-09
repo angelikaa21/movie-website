@@ -25,12 +25,11 @@ const quizEndpoint = (router) => {
 
         try {
             const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: 'gemini-pro' }); // Używamy 'gemini-pro'
+            const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
             const result = await model.generateContent(description);
             console.log('Full Gemini Response:', result);
 
-            // Sprawdzenie struktury odpowiedzi i wyciąganie rekomendacji bezpiecznie
             const responseText = result?.response?.candidates?.[0]?.content?.parts?.[0]?.text || 'No recommendation available';
             console.log("Recommendation:", responseText);
 

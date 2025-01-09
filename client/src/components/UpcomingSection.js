@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { fetchUpcomingMovies } from '../api/tmdb';
 import Slider from 'react-slick';
-import { sliderSettings } from '../utils/sliderSettings'; // Import wspólnych ustawień slidera
+import { sliderSettings } from '../utils/sliderSettings';
 import { Link } from 'react-router-dom';
-import '../styles/SliderSection.css'; // Wspólny plik CSS dla wszystkich trzech sekcji
+import '../styles/SliderSection.css';
 
 const UpcomingSection = () => {
     const [movies, setMovies] = useState([]);
-    const [isDragging, setIsDragging] = useState(false);  // Stan do śledzenia przewijania
-    const dragStartTime = useRef(null);  // Czas rozpoczęcia przewijania
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartTime = useRef(null);
 
     useEffect(() => {
         fetchUpcomingMovies()
@@ -21,7 +21,7 @@ const UpcomingSection = () => {
     }, []);
 
     const sliderSettingsWithDrag = {
-        ...sliderSettings, // Użycie wspólnych ustawień slidera
+        ...sliderSettings,
         beforeChange: (current, next) => {
             dragStartTime.current = Date.now();
             setIsDragging(true);
@@ -34,22 +34,21 @@ const UpcomingSection = () => {
     const handleCardClick = (e) => {
         const dragDuration = Date.now() - dragStartTime.current;
         
-        // Jeśli przewijanie trwało mniej niż 150 ms, to uznajemy to za kliknięcie, nie przewijanie
         if (isDragging && dragDuration < 150) {
-            e.preventDefault(); // Zablokowanie przejścia na stronę
+            e.preventDefault();
         }
     };
 
     return (
         <section className="slider-section upcoming">
             <h2>Upcoming Movies</h2>
-            <Slider {...sliderSettingsWithDrag}> {/* Użycie slidera z dodatkowymi ustawieniami */}
+            <Slider {...sliderSettingsWithDrag}>
                 {movies.map(movie => (
                     <div key={movie.id}>
                         <Link
-                            to={`/movies/${movie.id}`} // Link do strony szczegółów
+                            to={`/movies/${movie.id}`}
                             className="slider-card upcoming-card"
-                            onClick={handleCardClick} // Obsługa kliknięcia
+                            onClick={handleCardClick}
                         >
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}

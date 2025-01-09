@@ -1,15 +1,14 @@
 import axios from 'axios';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
-const API_KEY = process.env.TMDB_API_KEY || 'twój_klucz_api'; // Upewnij się, że masz ten klucz w pliku .env
+const API_KEY = process.env.TMDB_API_KEY;
 
 /**
- * Pobiera podobne filmy/seriale z TMDB.
- * @param {string} id - ID filmu lub serialu.
- * @param {boolean} isTVShow - True, jeśli to serial, False, jeśli film.
- * @param {string} id - ID filmu lub serialu.
- * @returns {Promise<Array>} - Lista podobnych filmów/seriali.
- * @returns {Promise<Object>} - Szczegóły filmu/serialu.
+ * @param {string} id 
+ * @param {boolean} isTVShow 
+ * @param {string} id
+ * @returns {Promise<Array>}
+ * @returns {Promise<Object>} 
  */
 export const fetchRecommendations = async (id, isTVShow = false) => {
     try {
@@ -30,7 +29,6 @@ export const fetchRecommendations = async (id, isTVShow = false) => {
     let details = null;
   
     try {
-      // Sprawdzenie dla filmów
       const movieResponse = await axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
       if (movieResponse.status === 200) {
         isTVShow = false;
@@ -44,7 +42,6 @@ export const fetchRecommendations = async (id, isTVShow = false) => {
   
     if (!details) {
       try {
-        // Sprawdzenie dla seriali
         const tvResponse = await axios.get(`${BASE_URL}/tv/${id}?api_key=${API_KEY}`);
         if (tvResponse.status === 200) {
           isTVShow = true;
