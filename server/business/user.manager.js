@@ -4,6 +4,8 @@ import UserDAO from '../DAO/userDAO';
 import applicationException from '../service/applicationException';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
+import { fetchRecommendations } from '../shared/tmdb';
+import { fetchItemType  } from '../shared/tmdb';
 
 
 function create(context) {
@@ -195,6 +197,55 @@ function create(context) {
     return comments;
   }
 
+  async function getRecommendations(userId) {
+    const user = await UserDAO.get(userId);
+  
+    if (!user || !user.favorites || user.favorites.length === 0) {
+      throw applicationException.new(applicationException.NOT_FOUND, 'User has no favorites');
+    }
+  
+    let recommendations = [];
+    let reason = '';
+    let randomIndex = Math.floor(Math.random() * user.favorites.length);
+    let favoriteId = user.favorites[randomIndex];
+  
+    try {
+      // Próba pobrania rekomendacji dla ulubionego filmu
+      const { isTVShow, details } = await fetchItemType(favoriteId);
+  
+      recommendations = await fetchRecommendations(favoriteId, isTVShow);
+  
+      // Jeśli brak rekomendacji, spróbuj z następnym ulubionym filmem
+      if (recommendations.length === 0) {
+        randomIndex = (randomIndex + 1) % user.favorites.length;
+        favoriteId = user.favorites[randomIndex];
+  
+        const { isTVShow: fallbackIsTVShow, details: fallbackDetails } = await fetchItemType(favoriteId);
+        recommendations = await fetchRecommendations(favoriteId, fallbackIsTVShow);
+  
+        reason = fallbackDetails.title || fallbackDetails.name;
+      } else {
+        reason = details.title || details.name;
+      }
+  
+      // Jeśli brak rekomendacji po dwóch próbach, zwróć odpowiedni komunikat
+      if (recommendations.length === 0) {
+        return {
+          reason: 'No recommendations available',
+          recommendations: [],
+        };
+      }
+  
+      return {
+        reason: reason,
+        recommendations: recommendations,
+      };
+    } catch (error) {
+      console.error('Błąd podczas pobierania rekomendacji:', error);
+      throw applicationException.new(applicationException.INTERNAL_ERROR, 'Nie udało się pobrać rekomendacji');
+    }
+  }
+
 
   return {
     authenticate: authenticate,
@@ -207,6 +258,7 @@ function create(context) {
     rateMovie: rateMovie,
     addComment: addComment,
     getCommentsByMovie: getCommentsByMovie,
+    getRecommendations: getRecommendations,
   };
 }
 

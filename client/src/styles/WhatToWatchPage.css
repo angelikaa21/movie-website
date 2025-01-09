@@ -1,0 +1,114 @@
+.what-to-watch-page {
+  background-color: #121212;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.quiz-section {
+  background-color: #1e1e1e;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 700px;
+  text-align: center;
+}
+
+.question-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-button {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 2px solid #444;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.option-button:hover {
+  background-color: #444;
+}
+
+.option-button.selected {
+  background-color: #6200ea;
+  color: #ffffff;
+  border-color: #6200ea;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.previous-button,
+.next-button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.previous-button:hover,
+.next-button:hover {
+  background-color: #6200ea;
+}
+
+.previous-button:disabled {
+  background-color: #333232;
+  cursor: not-allowed;
+}
+
+.recommendation-section {
+  text-align: center;
+  background-color: #1e1e1e;
+  padding: 60px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 600px;
+}
+
+.recommendation-section h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+.recommendation-section p {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
+
+.generate-again-button {
+  background-color: #c41ee5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.generate-again-button:hover {
+  background-color: #6200ea;
+}

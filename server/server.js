@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const userEndpoint = require('./REST/user.endpoint').default;
+const quizEndpoint = require('./REST/quiz.endpoint');
 
 const routes = require('./REST/routes').default;
 
@@ -30,6 +31,9 @@ app.use(router);
 
 userEndpoint(router);
 app.use('/api/user', router);
+
+quizEndpoint(router);
+app.use('/api/quiz', router);
 
 app.get('/', (req, res) => {
   res.send('Hello World');

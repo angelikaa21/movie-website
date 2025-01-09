@@ -14,11 +14,11 @@ export const fetchTrendingMovies = async () => {
 
 export const fetchPopularMovies = async (page) => {
   try {
-      const response = await axios.get(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
-      return response.data;
+    const response = await axios.get(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
+    return response.data;
   } catch (error) {
-      console.error("Error fetching popular movies:", error);
-      throw error;
+    console.error("Error fetching popular movies:", error);
+    throw error;
   }
 };
 
@@ -29,6 +29,15 @@ export const fetchPopularTVShows = async (page) => {
   } catch (error) {
     console.error("Error fetching popular TV shows:", error);
     throw error;
+  }
+};
+
+export const fetchTopRatedMovies = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`);
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching top rated movies:", error);
   }
 };
 
@@ -66,11 +75,11 @@ export const fetchWatchProviders = async (movieId) => {
 
 export const fetchMovieTrailer = async (movieId) => {
   try {
-      const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
-      return response.data.results.find(video => video.type === 'Trailer');
+    const response = await axios.get(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
+    return response.data.results.find(video => video.type === 'Trailer');
   } catch (error) {
-      console.error("Error fetching movie trailer:", error);
-      return null;
+    console.error("Error fetching movie trailer:", error);
+    return null;
   }
 };
 
@@ -86,33 +95,33 @@ export const fetchCast = async (movieId) => {
 
 export const fetchTVShowDetails = async (tvShowId) => {
   try {
-      const [detailsResponse, creditsResponse] = await Promise.all([
-          axios.get(`${BASE_URL}/tv/${tvShowId}?api_key=${API_KEY}&language=en-US`),
-          axios.get(`${BASE_URL}/tv/${tvShowId}/credits?api_key=${API_KEY}`),
-      ]);
+    const [detailsResponse, creditsResponse] = await Promise.all([
+      axios.get(`${BASE_URL}/tv/${tvShowId}?api_key=${API_KEY}&language=en-US`),
+      axios.get(`${BASE_URL}/tv/${tvShowId}/credits?api_key=${API_KEY}`),
+    ]);
 
-      const creators = detailsResponse.data.created_by || [];
-      const director = creators.length > 0 
-          ? creators.map(creator => creator.name).join(', ') 
-          : 'Not available';
+    const creators = detailsResponse.data.created_by || [];
+    const director = creators.length > 0
+      ? creators.map(creator => creator.name).join(', ')
+      : 'Not available';
 
-      return {
-          ...detailsResponse.data,
-          director,
-      };
+    return {
+      ...detailsResponse.data,
+      director,
+    };
   } catch (error) {
-      console.error("Error fetching TV show details:", error);
-      throw error;
+    console.error("Error fetching TV show details:", error);
+    throw error;
   }
 };
 
 export const fetchTVShowTrailer = async (tvShowId) => {
   try {
-      const response = await axios.get(`${BASE_URL}/tv/${tvShowId}/videos?api_key=${API_KEY}&language=en-US`);
-      return response.data.results.find(video => video.type === 'Trailer');
+    const response = await axios.get(`${BASE_URL}/tv/${tvShowId}/videos?api_key=${API_KEY}&language=en-US`);
+    return response.data.results.find(video => video.type === 'Trailer');
   } catch (error) {
-      console.error("Error fetching TV show trailer:", error);
-      return null;
+    console.error("Error fetching TV show trailer:", error);
+    return null;
   }
 };
 
@@ -128,19 +137,23 @@ export const fetchTVCast = async (tvShowId) => {
 
 export const fetchSimilar = async (id, isTVShow = false) => {
   try {
-    const url = `${BASE_URL}/${isTVShow ? 'tv' : 'movie'}/${id}/similar?api_key=${API_KEY}&language=en-US`;
+    console.log(`Fetching recommendations for id=${id}, isTVShow=${isTVShow}`);
+    const url = `${BASE_URL}/${isTVShow ? 'tv' : 'movie'}/${id}/recommendations?api_key=${API_KEY}&language=en-US`;
     const response = await axios.get(url);
+
+    console.log('Raw response from TMDB:', response.data.results);
 
     const filteredResults = response.data.results.filter(item => item.vote_average >= 5);
 
-    const sortedResults = filteredResults.sort((a, b) => b.vote_average - a.vote_average);
+    console.log('Filtered and sorted recommendations:', filteredResults);
 
-    return sortedResults;
+    return filteredResults.sort((a, b) => b.vote_average - a.vote_average);
   } catch (error) {
-    console.error("Error fetching similar items:", error);
+    console.error('Error fetching recommendations:', error);
     return [];
   }
 };
+
 export const searchMulti = async (query) => {
   if (!query) {
     console.warn("Search query is empty.");
