@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { searchMulti } from '../api/tmdb';
-import '../styles/SearchBar.css';
+import '../styles/Navbar.css';
 
 const SearchBar = ({ setSearchResults }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -45,7 +45,7 @@ const SearchBar = ({ setSearchResults }) => {
         <div className="navbar-search" ref={searchRef}>
             <input
                 type="text"
-                placeholder="Search for movies, shows, or people..."
+                placeholder="Search for movies or TV shows"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={() => setShowResults(true)}

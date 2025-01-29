@@ -30,16 +30,6 @@ const WhatToWatchPage = () => {
       options: ['Love', 'Friendship', 'Revenge', 'Mystery', 'Exploration', 'Survival', 'Comedy', 'Superheroes', 'Doesn\'t matter'],
     },
     {
-      key: 'language',
-      question: 'Do you have a language preference?',
-      options: ['No preference', 'English', 'Spanish', 'Korean', 'French', 'Other'],
-    },
-    {
-      key: 'age_group',
-      question: 'Who will be watching?',
-      options: ['Adults', 'Teenagers', 'Kids', 'All ages'],
-    },
-    {
       key: 'cinemaEra',
       question: 'Do you prefer movies from a specific era?',
       options: ['Classic (before 1980)', '80s and 90s', '2000s', 'Modern','Doesn\'t matter'],
@@ -73,7 +63,6 @@ const WhatToWatchPage = () => {
         setRecommendation(response.data.recommendation);
       })
       .catch((error) => {
-        console.error('Error fetching recommendation:', error);
         setRecommendation('An error occurred while fetching the recommendation.');
       });
   };

@@ -98,59 +98,73 @@
 .navbar-search {
     display: flex;
     align-items: center;
-    max-width: 500px;
-    background: rgba(221, 203, 203, 0.15);
+    max-width: 400px;
+    width: 100%;
+    background: rgba(44, 42, 42, 0.8);
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin: auto;
+    
 }
 
 .navbar-search input {
     width: 100%;
-    padding: 10px 15px;
+    padding: 12px 20px;
     border: none;
     background: transparent;
     color: white;
     font-size: 1em;
     outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
 }
 
 .navbar-search input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(200, 200, 200, 0.7);
 }
+
+.navbar-search input:focus {
+    background: rgba(0, 0, 0, 0.404);
+}
+
 .search-dropdown {
-    
     position: absolute;
-    top: 100%;
+    top: calc(100% + 5px);
     left: 0;
     right: 0;
-    background-color: #333;
+    background: rgba(30, 30, 36, 0.95);
     color: white;
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
-    border: 1px solid #ec7bb4;
-    border-radius: 4px;
+    border-radius: 0 0 20px 20px;
     z-index: 10;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    padding: 8px 0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    animation: dropdownFadeIn 0.3s ease-in-out;
 }
 
 .search-result-item {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 10px 15px;
     text-decoration: none;
     color: white;
+    transition: all 0.2s ease;
 }
 
 .search-result-item:hover {
-    background-color: #555;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .search-result-image {
-    width: 40px;
-    height: 60px;
-    margin-right: 10px;
+    width: 120px;
+    height: 100%;
+    margin-right: 15px;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .auth-buttons {
@@ -326,6 +340,17 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

@@ -12,71 +12,75 @@ dotenv.config();
 
 async function sendRecommendationEmail(user) {
   const transporter = nodemailer.createTransport({
-    host: "smtp.freesmtpservers.com",
-    port: 25,
-    secure: false,
-    auth: null,
+    host: "smtp.poczta.onet.pl",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "moviemotions@op.pl",
+      pass: "fgdExcERWat9FeZ",
+    },
   });
 
   try {
     const { reason, recommendation } = await getEmailRecommendations(user._id);
     if (recommendation) {
       const mailOptions = {
-        from: 'moviemotions@example.com',
+        from: 'moviemotions@op.pl',
         to: user.email,
         subject: `Your Movie Recommendation: ${recommendation.title || recommendation.name}`,
         html: `
-          <h1>Your Recommendation</h1>
-          <p>We found this for you based on your favorite: <strong>${reason}</strong></p>
-          <h2>${recommendation.title || recommendation.name}</h2>
-          <p>${recommendation.overview}</p>
-          <a href="https://www.themoviedb.org/${recommendation.media_type}/${recommendation.id}" target="_blank">
-            Learn more about this movie/TV show
-          </a>
-        `,
-      };
+        <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 30px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+          <!-- Logo Section -->
+          <div style="text-align: center; margin-bottom: 30px;">
+            <span style="color: #ec7bb4; font-size: 36px; font-weight: bold;">MOVIE</span>
+            <span style="color: #ffffff; background-color: #2c3e50; font-size: 36px; font-weight: bold; padding: 0 5px; border-radius: 5px;">MOTIONS</span>
+          </div>
+          <!-- Header Section -->
+          <div style="border-bottom: 1px solid #e0e0e0; padding-bottom: 20px; margin-bottom: 20px;">
+            <h1 style="color: #333; text-align: center; font-size: 24px;">Your Personalized Recommendation</h1>
+            <p style="color: #666; text-align: center; font-size: 16px;">We found this for you based on your favorite: <strong style="color: #ec7bb4; font-size: 18px;">${reason}</strong></p>
+          </div>
+          <!-- Recommendation Section -->
+          <div style="margin-bottom: 20px;">
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 15px; font-size: 38px; font-weight: bold;">${recommendation.title || recommendation.name}</h2>
+            <p style="color: #555; line-height: 1.6; font-size: 16px; text-align: justify;">${recommendation.overview}</p>
+          </div>
+          <!-- CTA Button Section -->
+          <div style="text-align: center; margin-bottom: 30px; padding: 20px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0;">
+            <a href="http://localhost:3000/${recommendation.media_type === 'tv' ? 'tv-series' : 'movies'}/${recommendation.id}" 
+               style="background-color: #ec7bb4; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;"
+               target="_blank">
+              Learn more about this ${recommendation.media_type === 'tv' ? 'TV Show' : 'Movie'}
+            </a>
+          </div>
+          <!-- Footer Section -->
+          <div style="text-align: center; font-size: 14px; color: #999;">
+            <p style="margin: 0;">Enjoy your recommendation!</p>
+            <p style="margin: 5px 0;">
+            </p>
+          </div>
+        </div>
+      `,
+    };
 
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent:', info);
-      console.log('Accepted:', info.accepted);
-      console.log('Rejected:', info.rejected);
-    } else {
-      const noFavoritesMailOptions = {
-        from: 'moviemotions@example.com',
-        to: user.email,
-        subject: 'Add Favorites to Get Recommendations!',
-        html: `
-          <h1>Hey there!</h1>
-          <p>Add something to your favorites to start receiving movie recommendations!</p>
-        `,
-      };
-
-      const info = await transporter.sendMail(noFavoritesMailOptions);
-      console.log('No favorites email sent:', info);
-      console.log('Accepted:', info.accepted);
-      console.log('Rejected:', info.rejected);
-    }
-  } catch (error) {
-    if (error.error && error.error.code === 404 && error.message === 'User has no favorites') {
-      const noFavoritesMailOptions = {
-        from: 'moviemotions@example.com',
-        to: user.email,
-        subject: 'Add Favorites to Get Recommendations!',
-        html: `
-          <h1>Hey there!</h1>
-          <p>Add something to your favorites to start receiving movie recommendations!</p>
-        `,
-      };
-
-      const info = await transporter.sendMail(noFavoritesMailOptions);
-      console.log('No favorites email sent:', info);
-      console.log('Accepted:', info.accepted);
-      console.log('Rejected:', info.rejected);
-    } else {
-      console.error(`Error sending email to ${user.email}:`, error);
-      throw error;
-    }
+    const info = await transporter.sendMail(mailOptions);
+  } else {
+    throw new Error('User has no favorites');
   }
+} catch (error) {
+  const noFavoritesMailOptions = {
+    from: 'moviemotions@op.pl',
+    to: user.email,
+    subject: 'Add Favorites to Get Recommendations!',
+    html: `
+      <h1>Hey there!</h1>
+      <p>Add something to your favorites to start receiving movie recommendations!</p>
+    `,
+  };
+
+  const info = await transporter.sendMail(noFavoritesMailOptions);
+  if (error.message !== 'User has no favorites') throw error;
+}
 }
 
 async function getEmailRecommendations(userId) {
@@ -117,10 +121,12 @@ async function getEmailRecommendations(userId) {
     }
 
     const recommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
+    const { poster_path } = await fetchItemType(recommendation.id);
 
     return {
       reason: reason,
       recommendation: recommendation,
+      poster_path: poster_path || '',
     };
   } catch (error) {
     console.error('Błąd podczas pobierania rekomendacji:', error);
@@ -359,8 +365,7 @@ function create(context) {
         recommendations: recommendations,
       };
     } catch (error) {
-      console.error('Błąd podczas pobierania rekomendacji:', error);
-      throw applicationException.new(applicationException.INTERNAL_ERROR, 'Nie udało się pobrać rekomendacji');
+      throw applicationException.new(applicationException.INTERNAL_ERROR, 'Failed to download recommendations');
     }
   }
 

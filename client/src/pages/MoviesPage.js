@@ -34,7 +34,7 @@ const MoviesPage = () => {
     const loadFilteredMovies = async () => {
         setLoading(true);
         try {
-            const data = await fetchFilteredMovies(page, filters.genre, filters.year, filters.sortBy);
+            const data = await fetchFilteredMovies(page, filters.genre, filters.year, filters.sortBy, 100); // Przekazanie wartości minVoteCount
             if (data && data.length > 0) {
                 setMovies(prevMovies => [
                     ...prevMovies,
@@ -88,7 +88,7 @@ const MoviesPage = () => {
 
     return (
         <div className="movies-page">
-            <h1 className="page-title">Popular Movies</h1>
+            <h1 className="page-title">Movies</h1>
             
             <div className="filter-container">
                 <select name="genre" value={filters.genre} onChange={handleFilterChange} className="button-common select-style">
@@ -106,21 +106,12 @@ const MoviesPage = () => {
                     <option value="vote_average.asc">Lowest Rated</option>
                 </select>
             
-
-            <div className="year-dropdown">
-            <button onClick={toggleYearDropdown} className="button-common">
-                        {filters.year || "All Years"}
-                    </button>
-                    {yearDropdownOpen && (
-                        <ul className="year-dropdown-list">
-                            {["2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"].map(year => (
-                                <li key={year} onClick={() => handleYearSelect(year)}>
-                                    {year}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+             <select name="year" value={filters.year} onChange={handleFilterChange} className="button-common select-style">
+                <option value="">All Years</option>
+                {["2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"].map(year => (
+                    <option key={year} value={year}>{year}</option>
+                ))}
+            </select>
             </div>
             <div className="movies-container">
                 {movies.length > 0 ? (

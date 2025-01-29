@@ -16,8 +16,6 @@ const quizEndpoint = (router) => {
         - Available Time: ${answers.time || 'Not specified'}
         - Level of Engagement: ${answers.engagement || 'Not specified'}
          - Preferred Themes: ${answers.themes && answers.themes !== "Doesn't matter" ? answers.themes : 'No specific preference'}
-        - Language: ${answers.language && answers.language !== "No preference" ? answers.language : 'No preference'}
-         - Age Group: ${answers.age_group || 'Not specified'}
          - Preferred Cinema Era: ${answers.cinemaEra && answers.cinemaEra !== "Doesn't matter" ? answers.cinemaEra : 'No specific preference'}
          - Genres to Avoid: ${answers.avoid_genres && answers.avoid_genres !== "None" ? answers.avoid_genres : 'No specific restrictions'}
          - Desired Emotional Response: ${answers.emotional_response || 'Not specified'}

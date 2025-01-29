@@ -19,7 +19,6 @@ export const fetchRecommendations = async (id, isTVShow = false) => {
   
       return filteredResults.sort((a, b) => b.vote_average - a.vote_average);
     } catch (error) {
-      console.error('Błąd podczas pobierania rekomendacji:', error);
       return [];
     }
   };
@@ -36,7 +35,6 @@ export const fetchRecommendations = async (id, isTVShow = false) => {
       }
     } catch (movieError) {
       if (movieError.response?.status !== 404) {
-        console.error(`Błąd podczas sprawdzania filmu (id=${id}):`, movieError.message);
       }
     }
   
@@ -49,13 +47,12 @@ export const fetchRecommendations = async (id, isTVShow = false) => {
         }
       } catch (tvError) {
         if (tvError.response?.status !== 404) {
-          console.error(`Błąd podczas sprawdzania serialu (id=${id}):`, tvError.message);
         }
       }
     }
   
     if (!details) {
-      throw new Error(`Nie znaleziono elementu o ID: ${id}`);
+      throw new Error(`Item with ID not found: ${id}`);
     }
   
     return { isTVShow, details };

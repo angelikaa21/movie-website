@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/SearchResults.css';
+import '../styles/Navbar.css';
 
 const SearchResults = ({ results, handleResultClick }) => {
     const handleResultClickInternal = () => {

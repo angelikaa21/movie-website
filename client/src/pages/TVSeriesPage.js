@@ -51,7 +51,7 @@ const TVSeriesPage = () => {
 
     return (
         <div className="tvseries-page">
-            <h1 className="page-title">Popular TV Series</h1>
+            <h1 className="page-title">TV Series</h1>
 
             <div className="filter-container">
                 <select name="genre" value={filters.genre} onChange={handleFilterChange} className="button-common select-style">

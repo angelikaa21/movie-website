@@ -60,6 +60,24 @@ const userEndpoint = (router) => {
     }
   });
 
+  router.get('/api/user/profile', auth, async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      const user = await userDAO.get(userId);
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+  
+      res.status(200).json({ 
+        name: user.name, 
+      });
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      applicationException.errorHandler(error, res);
+    }
+  });
+
   router.post('/api/user/favorites/add', auth, async (req, res) => {
     try {
       const { movieId } = req.body;
@@ -107,6 +125,22 @@ const userEndpoint = (router) => {
       applicationException.errorHandler(error, res);
     }
   });
+
+  router.get('/api/user/favorites', auth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await userDAO.get(userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        res.status(200).json(user.favorites);
+    } catch (error) {
+        console.error('Error fetching favorites:', error);
+        applicationException.errorHandler(error, res);
+    }
+});
 
   router.get('/api/user/favorites/check', auth, async (req, res) => {
     try {
@@ -209,6 +243,21 @@ const userEndpoint = (router) => {
     }
   });
 
+  router.get('/api/user/watchlist', auth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await userDAO.get(userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.status(200).json(user.watchlist);
+    } catch (error) {
+        console.error('Error fetching watchlist:', error);
+        applicationException.errorHandler(error, res);
+    }
+});
+
   router.get('/api/user/watchlist/count', auth, async (req, res) => {
     try {
       const userId = req.user.userId;
@@ -272,6 +321,23 @@ const userEndpoint = (router) => {
     }
   });
 
+  router.get('/api/user/ratings/count', auth, async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      const user = await userDAO.get(userId);
+  
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+      const ratingsCount = user.ratings ? user.ratings.size : 0;
+  
+      res.status(200).json({ count: ratingsCount });
+    } catch (error) {
+      console.error('Error fetching ratings count:', error);
+      applicationException.errorHandler(error, res);
+    }
+  });
+
   router.post('/api/user/comments', auth, async (req, res, next) => {
     const { movieId, text } = req.body;
     const userId = req.user.userId;
@@ -311,15 +377,11 @@ const userEndpoint = (router) => {
       const userId = req.user.userId;
   
       if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-        console.error('Invalid or undefined user ID:', userId);
         throw applicationException.new(applicationException.BAD_REQUEST, 'Invalid user ID');
-      }
-  
-      const { reason, recommendations } = await business.getUserManager(req).getRecommendations(userId);
-  
+      }  
+      const { reason, recommendations } = await business.getUserManager(req).getRecommendations(userId); 
       res.status(200).json({ reason, recommendations });
     } catch (error) {
-      console.error('Error fetching recommendations:', error);
       applicationException.errorHandler(error, res);
     }
   });

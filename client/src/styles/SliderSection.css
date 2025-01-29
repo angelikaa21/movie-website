@@ -1,4 +1,3 @@
-/* Styl ogólny dla wszystkich trzech sekcji sliderów */
 .slider-section {
   padding: 5px 5px;
   background-color: #000002;
@@ -9,7 +8,7 @@
   background-color: transparent;
   max-width: 2000px;
 }
-/* Styl dla nagłówków w sekcji sliderów */
+
 .slider-section h2 {
   font-size: 2rem;
   margin-left: 20px;
@@ -17,7 +16,6 @@
   margin-bottom: 30px;
 }
 
-/* Styl dla kart w sliderze */
 .slider-card {
   display: flex;
   flex-direction: column;
@@ -26,7 +24,6 @@
   color: #ffffff;
 }
 
-/* Styl kontenera obrazu w karcie */
 .slider-image-container {
   width: 80%;
   height: auto;
@@ -34,7 +31,6 @@
   border-radius: 8px;
 }
 
-/* Styl samego obrazu w karcie */
 .slider-image {
   width: 85%;
   height: auto;
@@ -42,12 +38,10 @@
   border-radius: 8px;
 }
 
-/* Efekt hover dla obrazu */
 .slider-image:hover {
   transform: scale(0.95);
 }
 
-/* Styl dla tytułu filmu w karcie */
 .slider-card h3 {
   font-size: 1.1rem;
   margin-top: 10px;

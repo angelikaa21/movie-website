@@ -141,11 +141,7 @@ export const fetchSimilar = async (id, isTVShow = false) => {
     const url = `${BASE_URL}/${isTVShow ? 'tv' : 'movie'}/${id}/recommendations?api_key=${API_KEY}&language=en-US`;
     const response = await axios.get(url);
 
-    console.log('Raw response from TMDB:', response.data.results);
-
     const filteredResults = response.data.results.filter(item => item.vote_average >= 5);
-
-    console.log('Filtered and sorted recommendations:', filteredResults);
 
     return filteredResults.sort((a, b) => b.vote_average - a.vote_average);
   } catch (error) {
@@ -178,7 +174,7 @@ export const searchMulti = async (query) => {
   }
 };
 
-export const fetchFilteredMovies = async (page, genre = '', year = '', sortBy = 'popularity.desc') => {
+export const fetchFilteredMovies = async (page, genre = '', year = '', sortBy = 'vote_average.desc', minVoteCount = 100) => {
   try {
     const params = {
       api_key: API_KEY,
@@ -186,6 +182,9 @@ export const fetchFilteredMovies = async (page, genre = '', year = '', sortBy = 
       sort_by: sortBy,
       page,
       ...(year && { 'primary_release_year': year }),
+      vote_count: {
+        gte: minVoteCount
+      }
     };
 
     const response = await axios.get(`${BASE_URL}/discover/movie`, { params });

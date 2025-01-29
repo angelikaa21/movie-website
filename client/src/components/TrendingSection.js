@@ -67,7 +67,7 @@ const TrendingSection = () => {
 
     return (
         <section className="trending-section">
-            <h2><FaFire /> Trending Movies <FaFire /></h2>
+            <h2>Trending this week</h2>
             <Slider {...trendingSliderSettings} ref={sliderRef}>
                 {movies.map(movie => {
                     const linkTo = movie.media_type === 'movie'

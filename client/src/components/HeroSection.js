@@ -68,7 +68,6 @@ const HeroSection = () => {
                             <div className="hero-content">
                                 <h1>{movie.title || movie.name}</h1>
                                 <div className="movie-details">
-                                    <span className="movie-rating">★ {movie.vote_average}</span>
                                     <span className="movie-runtime">
                                         {movie.runtime ? `${movie.runtime} min` : ''}
                                     </span>

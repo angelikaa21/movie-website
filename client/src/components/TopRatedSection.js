@@ -16,7 +16,6 @@ const TopRatedSection = () => {
                 setMovies(results);
             })
             .catch((err) => {
-                console.error("Error fetching top rated movies:", err);
             });
     }, []);
 
@@ -33,12 +32,11 @@ const TopRatedSection = () => {
 
     const handleCardClick = (e) => {
         const dragDuration = Date.now() - dragStartTime.current;
-        
         if (isDragging && dragDuration < 150) {
             e.preventDefault();
         }
     };
-
+    
     return (
         <section className="slider-section">
             <h2>Top Rated Movies</h2>
@@ -48,8 +46,7 @@ const TopRatedSection = () => {
                         <Link
                             to={`/movies/${movie.id}`}
                             className="slider-card"
-                            onClick={handleCardClick}
-                        >
+                            onClick={handleCardClick}>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}
