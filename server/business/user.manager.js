@@ -17,7 +17,7 @@ async function sendRecommendationEmail(user) {
     secure: true,
     auth: {
       user: "moviemotions@op.pl",
-      pass: "fgdExcERWat9FeZ",
+      pass: process.env.SMTP_PASSWORD,
     },
   });
 
