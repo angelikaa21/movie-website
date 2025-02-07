@@ -16,6 +16,13 @@
   margin-bottom: 30px;
 }
 
+.slider-section-similar h2 {
+  font-size: 2rem;
+  margin-left: 100px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
 .slider-card {
   display: flex;
   flex-direction: column;

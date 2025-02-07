@@ -24,7 +24,6 @@ const Comments = ({ movieId, currentUserId }) => {
             setComments(response.data);
         } catch (err) {
             setError('Failed to fetch comments. Please try again.');
-            console.error('Error fetching comments:', err);
         } finally {
             setLoading(false);
         }
@@ -77,7 +76,6 @@ const Comments = ({ movieId, currentUserId }) => {
             }
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to add comment. Please try again.');
-            console.error('Error adding comment:', err);
             showError("Failed to add comment.");
         }
     };

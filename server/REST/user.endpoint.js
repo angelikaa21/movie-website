@@ -338,6 +338,31 @@ const userEndpoint = (router) => {
     }
   });
 
+  router.get('/api/user/ratings/list', auth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await userDAO.get(userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        if (!user.ratings || user.ratings.size === 0) {
+            return res.status(404).send('No ratings found');
+        }
+
+        const ratedMovies = Array.from(user.ratings.entries()).map(([movieId, rating]) => ({
+            id: movieId,
+            rating
+        }));
+
+        res.status(200).json(ratedMovies);
+    } catch (error) {
+        console.error('Error fetching rated movies:', error);
+        applicationException.errorHandler(error, res);
+    }
+});
+  
   router.post('/api/user/comments', auth, async (req, res, next) => {
     const { movieId, text } = req.body;
     const userId = req.user.userId;

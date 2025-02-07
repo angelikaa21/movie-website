@@ -12,6 +12,7 @@ import {
     fetchTVCast,
     fetchSimilar
 } from '../api/tmdb';
+import { showSuccess, showError } from '../utils/notification';
 import Cast from '../components/Cast';
 import Similar from '../components/Similar';
 import Comments from '../components/Comments';
@@ -221,10 +222,9 @@ const MovieDetailsPage = ({ isTVShow }) => {
             setIsRated(true);
 
             toggleRateModal();
-            alert('Rating submitted successfully!');
+            showSuccess('Rating submitted successfully!');
         } catch (err) {
-            console.error('Error submitting rating:', err.message);
-            alert(`Error submitting rating: ${err.message}`);
+            showError(`Error submitting rating: ${err.message}`);
         }
     };
 

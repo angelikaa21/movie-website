@@ -14,6 +14,7 @@ import MovieDetailsPage from './pages/MovieDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import Home from './pages/Home';
 import SearchResults from './components/SearchResults';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import './styles/App.css';
 import './styles/Notification.css';
@@ -54,7 +55,7 @@ const App = () => {
               <Route path="/what-to-watch" element={<WhatToWatchPage />} />
               <Route path="/movies/:id" element={<MovieDetailsPage isTVShow={false} />} />
               <Route path="/tv-series/:id" element={<MovieDetailsPage isTVShow={true} />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             </Routes>
           </CSSTransition>
         </TransitionGroup>

@@ -64,38 +64,45 @@
 }
 
 .favorites-container,
-.watchlist-container {
+.watchlist-container,
+.ratings-container {
   margin-top: 30px;
 }
 
+
+
 .favorites-list,
-.watchlist-list {
+.watchlist-list,
+.ratings-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
 }
 
-.favorite-movie,
-.watchlist-movie {
+.favorite-item,
+.watchlist-item,
+.rated-item {
   width: calc(20% - 20px);
   max-width: 185px;
   text-align: center;
   background-color: #2b2b2b;
   border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   padding: 10px;
 }
 
-.favorite-movie img,
-.watchlist-movie img {
+.favorite-item img,
+.watchlist-item img,
+.rated-item img {
   width: 100%;
   height: auto;
   border-radius: 4px;
 }
 
-.favorite-movie h3,
-.watchlist-movie h3 {
+.favorite-item h3,
+.watchlist-item h3,
+.rated-item h3 {
   margin: 10px 0 0;
   font-size: 1rem;
   white-space: nowrap;
@@ -104,43 +111,47 @@
 }
 
 @media (max-width: 1200px) {
-  .favorite-movie,
-  .watchlist-movie {
+  .favorite-item,
+  .watchlist-item,
+  .rated-item {
     width: calc(25% - 20px);
   }
 }
 
 @media (max-width: 992px) {
-  .favorite-movie,
-  .watchlist-movie {
+  .favorite-item,
+  .watchlist-item,
+  .rated-item {
     width: calc(33.33% - 20px);
   }
 }
 
 @media (max-width: 768px) {
   .profile-header {
-      flex-direction: column;
-      text-align: center;
+    flex-direction: column;
+    text-align: center;
   }
   .profile-avatar {
-      margin: 0 auto 10px;
+    margin: 0 auto 10px;
   }
   .stats-container {
-      flex-direction: column;
-      align-items: center;
+    flex-direction: column;
+    align-items: center;
   }
   .stat-item {
-      margin-bottom: 10px;
+    margin-bottom: 10px;
   }
-  .favorite-movie,
-  .watchlist-movie {
+  .favorite-item,
+  .watchlist-item,
+  .rated-item {
     width: calc(50% - 20px);
   }
 }
 
 @media (max-width: 480px) {
-  .favorite-movie,
-  .watchlist-movie {
+  .favorite-item,
+  .watchlist-item,
+  .rated-item {
     width: 100%;
   }
 }

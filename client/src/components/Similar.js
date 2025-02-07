@@ -34,7 +34,7 @@ const Similar = ({ similar, isTVShow }) => {
 
   return (
     <section className="slider-section-similar">
-      <h2>Similar {isTVShow ? "TV Shows" : "Movies"}</h2>
+      <h2>Similar</h2>
       <Slider {...sliderSettingsWithDrag}>
         {filteredSimilar.map(item => (
           <div key={item.id}>
