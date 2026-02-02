@@ -1,0 +1,135 @@
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+.trending-section {
+    position: relative;
+    top: -50px;
+    padding: 0 15px;
+    color: #969292;
+    background-color: transparent !important;
+    text-align: center;
+    z-index: 1;
+    margin-bottom: 20px;
+    margin-top: -150px;
+}
+
+.trending-movie-card {
+    flex: 0 0 auto;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    color: #ffffff;
+    transition: transform 0.3s ease;
+}
+
+.trending-movie-card img {
+    width: 97%;
+    object-fit: cover;
+    border-radius: 26px;
+    max-height: 250px;
+}
+
+.trending-movie-card img:hover{
+    border: 0.5px solid #494849;
+
+}
+
+.slick-slider {
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+.slick-slide {
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    justify-content: center;
+}
+
+.slick-prev, .slick-next {
+    width: 70px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    background: transparent;
+    border-radius: 8px;
+}
+
+.slick-prev {
+    left: 10px;
+}
+
+.slick-next {
+    right: 10px;
+}
+
+.slick-prev:hover, .slick-next:hover {
+    background-color: transparent;
+    opacity: 1;
+}
+
+.slick-prev:before, .slick-next:before {
+    content: none;
+}
+
+.slick-prev:after, .slick-next:after {
+    font-size: 24px;
+    color: #ffffff;
+}
+
+.slick-prev:after {
+    content: '‹';
+    color: #cfcdcd;
+}
+
+.slick-next:after {
+    content: '›';
+    color: #cfcdcd;
+}
+.trending-progress-bar-container {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    background-color: #0f0f0f;
+    height: 4px;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.trending-progress-bar {
+    height: 100%;
+    background-color: #808080;
+    width: 0;
+    transition: width 0.5s ease;
+    border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+    .slick-prev, .slick-next {
+        font-size: 2em;
+        padding: 12px;
+    }
+
+    .trending-movie-card img {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slick-prev, .slick-next {
+        font-size: 1.5em;
+        padding: 10px;
+    }
+
+    .trending-movie-card img {
+        max-height: 180px;
+    }
+}

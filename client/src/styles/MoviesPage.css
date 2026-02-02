@@ -1,0 +1,179 @@
+.movies-page, .tvseries-page {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 30px 20px;
+    min-height: 100vh;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.page-title {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+    color: #f5f5f5;
+    letter-spacing: 0.5px;
+}
+
+.movies-container, .tvseries-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    padding: 0 10px;
+}
+
+.movie-card {
+    background-color: #2a2a2a;
+    overflow: hidden;
+    max-width: 180px;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.movie-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.movie-card:hover::after {
+    opacity: 1;
+}
+
+.movie-card h3 {
+    font-size: 14px;
+    margin: 10px 0 5px 0;
+    color: #f5f5f5;
+    position: relative;
+    z-index: 1;
+}
+
+.button-common, select {
+    background-color: #2a2a2a;
+    color: #f091d3;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button-common:hover, select:hover {
+    background-color: #3a3a3a;
+}
+
+.select-style {
+    text-align: left;
+}
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.year-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%23ff69b4" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 1em;
+}
+
+select option {
+    background-color: #2a2a2a;
+    color: #f091d3;
+}
+
+select option:hover, select option:checked {
+    background-color: #3a3a3a;
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.load-more-button {
+    background-color: #2a2a2a;
+    color: #f091d3;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.load-more-button:hover {
+    background-color: #3a3a3a;
+}
+
+.load-more-button:disabled, .load-more-button.loading {
+    background-color: #4a4a4a;
+    color: #999;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .movies-page, .tvseries-page {
+        padding: 20px 10px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        margin-top: 30px;
+    }
+
+    .movies-container, .tvseries-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .movie-card {
+        max-width: 150px;
+        padding: 10px;
+    }
+
+    .filter-container {
+        gap: 10px;
+    }
+
+    .button-common, select {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}

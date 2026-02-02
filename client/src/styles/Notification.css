@@ -1,0 +1,27 @@
+.toast-success {
+  background-color: #0f0f0f;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid white;
+}
+
+.toast-success .Toastify__progress-bar {
+  background-color: #81C784;
+}
+
+.toast-error {
+  background-color: #63110b;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid white;
+}
+
+.toast-error .Toastify__progress-bar {
+  background-color: #E57373;
+}

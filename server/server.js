@@ -1,7 +1,15 @@
+require('@babel/register');
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+
+const userEndpoint = require('./REST/user.endpoint').default;
+const quizEndpoint = require('./REST/quiz.endpoint');
+
+const routes = require('./REST/routes').default;
+const scheduleDailyEmails = require('./service/emailScheduler').default;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -14,9 +22,22 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true
 }).then(() => {
   console.log('Connection with MongoDB successful!');
+
+  scheduleDailyEmails();
+
 }).catch(err => {
   console.error('Failed to connect with MongoDB: ', err);
 });
+
+const router = express.Router();
+routes(router);
+app.use(router);
+
+userEndpoint(router);
+app.use('/api/user', router);
+
+quizEndpoint(router);
+app.use('/api/quiz', router);
 
 app.get('/', (req, res) => {
   res.send('Hello World');
